@@ -38,8 +38,7 @@ def separate_edge_rate(graph, edge_rate):
     return separate_edge_sum(graph, edge_sum)
 
 def evaluate(test, result, quiet=False):
-    # test_copy = result.copy()
-    test_copy = result[:]
+    test_copy = result.copy()
     for node_tuple in test_copy:
         result.add((node_tuple[1], node_tuple[0]))
     hit_sum = len(test & result)
