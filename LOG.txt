@@ -1,0 +1,2 @@
+1.使用Jaccard系数，准确率和召回率都只有千分之一。
+2.使用common_neighbors、jaccard_coef、adamic_coef、pref_attachment集成方法f值可以达到14%；现在的model只是用来查找二度人脉，对链接的评分和预测在test.py文件中处理。

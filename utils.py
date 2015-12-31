@@ -1,3 +1,5 @@
+#coding=utf-8
+
 import random
 
 def separate_edge_sum(graph, edge_sum):
@@ -55,3 +57,37 @@ def evaluate(test, result, quiet=False):
         print("F1: %f" % f1)
     rst = {"Hit Sum": hit_sum, "Precision": precision, "Recall": recall, "F1": f1}
     return rst
+
+def load_data_list(filename):
+    dataset = []
+    with open(filename, "r") as fp:
+        data = fp.read()
+        if "\r\n" in data:
+            data_list = data.split("\r\n")
+        else:
+            data_list = data.split("\n")
+        for s in data_list:
+            comment_index = s.find("#")
+            if comment_index != -1:
+                s = s[: comment_index]
+            if len(s) == 0: continue
+            s = s.replace(" ", "\t")
+            tup = tuple(s.split("\t"))
+            inttup = []
+            for t in tup:
+                if t.find('.') == -1: inttup.append(int(t))
+                else: inttup.append(float(t))
+            dataset.append(tuple(inttup))
+    return dataset
+
+def load_data_set(filename):
+    return set(load_data_list(filename))
+
+# 潜在朋友，包含二度和三度人脉
+def latent_friends(node, graph):
+    links = set(graph.node(node).keys())
+    temp_links = set()
+    for node in links:
+        temp_links = temp_links | set(graph.node(node).keys())
+    links = links | temp_links
+    return links
