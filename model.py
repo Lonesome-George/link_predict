@@ -11,7 +11,6 @@ MIN_TOTAL_FRIENDS = 20
 class Model:
     def __init__(self, graph):
         self.__graph = graph
-        # self.__gdist = {}
         self.__conns = {}
 
     def find_latent_friends(self):
@@ -20,7 +19,7 @@ class Model:
             if not self.__conns.has_key(ni):
                 self.__conns[ni] = {}
             fringe_nodes = set(self.__graph.node(ni).keys())
-            # if len(fringe_nodes) < 3: continue # 自己的直接朋友少于3,认为自己没有其他朋友
+            if len(fringe_nodes) < 2: continue # 自己的直接朋友少于2,认为自己没有其他朋友
             for k in range(2,3):
                 fringe_nodes = self.find_kdegree_friends(ni, fringe_nodes, k)
                 for nj in fringe_nodes:
@@ -35,18 +34,14 @@ class Model:
 
     # 查找k度人脉
     def find_kdegree_friends(self, me, nodes, k):
-        # kfriends = set()
         kfriends = {}
         if k > 1:
             for node in nodes:
                 fringe_nodes = set(self.__graph.node(node).keys())
                 for nj in fringe_nodes:
-                    # if me == nj or len(self.__graph.node(nj)) < 40: continue # 对方的朋友少于4,认为他不是我的朋友
                     if me == nj: continue
                     else:
                         cmn_friends = self.find_common_friends(fringe_nodes, set(self.__graph.node(nj).keys()))
-                        # if cmn_friends < 10: continue
-                        # else: kfriends[nj] = cmn_friends
                         kfriends[nj] = cmn_friends
         kfriends = sorted(kfriends.iteritems(), key=lambda x:x[1], reverse=True)
         return set([x[0] for x in kfriends])
@@ -113,7 +108,7 @@ if __name__ == '__main__':
     # link_scores = model.train()
     # result = model.predict(link_scores, 17646)
     ''' new version '''
-    # model.find_latent_friends()
+    model.find_latent_friends()
     # link_scores = model.train_v2()
     # result = load_data_set('../data/result.txt')
     # test = load_data_set('../data/test.txt')

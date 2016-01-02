@@ -83,7 +83,7 @@ def load_data_list(filename):
 def load_data_set(filename):
     return set(load_data_list(filename))
 
-# 潜在朋友，包含二度和三度人脉
+# 搜索二度和三度人脉
 def latent_friends(node, graph):
     links = set(graph.node(node).keys())
     temp_links = set()

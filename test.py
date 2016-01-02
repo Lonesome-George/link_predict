@@ -20,7 +20,7 @@ def test_cmn_friends():
     g = Graph("../data/train.txt")
     g.read()
     test = load_data_list("../data/friends_latent.txt")
-    with open('../data/test2_result.txt', 'w') as fp:
+    with open('../data/test_result.txt', 'w') as fp:
         for t in test:
             fp.write('%d\t%d\t%d\n' % (t[0], t[1], len(common_friends(g, t[0], t[1]))))
         fp.close()
@@ -29,7 +29,7 @@ def test_jaccard():
     g = Graph("../data/train.txt")
     g.read()
     test = load_data_list("../data/friends_latent.txt")
-    with open('../data/test2_result2.txt', 'w') as fp:
+    with open('../data/test_result2.txt', 'w') as fp:
         for t in test:
             friends_a = set(g.node(t[0]).keys())
             friends_b = set(g.node(t[1]).keys())
@@ -42,7 +42,7 @@ def test_adamic():
     g = Graph("../data/train.txt")
     g.read()
     test = load_data_list("../data/friends_latent.txt")
-    with open('../data/test2_result3.txt', 'w') as fp:
+    with open('../data/test_result3.txt', 'w') as fp:
         for t in test:
             friends_a = set(g.node(t[0]).keys())
             friends_b = set(g.node(t[1]).keys())
@@ -57,7 +57,7 @@ def test_pren_attachment():
     g = Graph("../data/train.txt")
     g.read()
     test = load_data_list("../data/friends_latent.txt")
-    with open('../data/test2_result4.txt', 'w') as fp:
+    with open('../data/test_result4.txt', 'w') as fp:
         for t in test:
             friends_a = set(g.node(t[0]).keys())
             friends_b = set(g.node(t[1]).keys())
@@ -73,7 +73,7 @@ def normalize(link_scores):
 
 # def ensemble():
 #     link_scores = {}
-#     filenames = ('../data/test2_result.txt', '../data/test2_result2.txt', '../data/test2_result3.txt')
+#     filenames = ('../data/test_result.txt', '../data/test_result2.txt', '../data/test_result3.txt')
 #     for filename in filenames:
 #         result = load_data_list(filename)
 #         temp_scores = {}
@@ -95,9 +95,11 @@ def normalize(link_scores):
 
 def ensemble():
     link_scores = {}
-    # filenames = ('../data/test2_result.txt', '../data/test2_result2.txt', '../data/test2_result3.txt')
-    filenames = ('../data/test2_result2.txt', '../data/test2_result3.txt', '../data/test2_result4.txt')
+    filenames = ('../data/test_result.txt', '../data/test_result2.txt', '../data/test_result3.txt', '../data/test_result4.txt')
+    # total_score = 0
+    iter = 0
     for filename in filenames:
+        iter += 1
         result = load_data_list(filename)
         temp_scores = {}
         node = 0
@@ -106,36 +108,29 @@ def ensemble():
                 temp_scores[(ni, nj)] = score
             else:
                 for link, score in normalize(temp_scores).iteritems():
-                    # if not link_scores.has_key(link): link_scores[link] = 0
-                    # link_scores[link] += score
                     if not link_scores.has_key(link[0]): link_scores[link[0]] = {}
                     if not link_scores[link[0]].has_key(link[1]): link_scores[link[0]][link[1]] = 0
-                    link_scores[link[0]][link[1]] += score
+                    link_scores[link[0]][link[1]] +=  score
                 node = ni
                 temp_scores = {}
                 temp_scores[(ni, nj)] = score
     with open('../data/ensemble_result.txt', 'w') as fp:
+        result_set = set()
         for ni, temp_scores in link_scores.iteritems():
-            temp_scores = dict(sorted(temp_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:3])
+            temp_scores = dict(sorted(temp_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:4])
             for nj, score in temp_scores.iteritems():
+                if (ni,nj) in result_set: continue
                 fp.write('%d\t%d\n' % (ni, nj))
                 fp.write('%d\t%d\n' % (nj, ni))
-        # total_scores = {}
-        # for ni, temp_scores in link_scores.iteritems():
-        #     for nj, score in temp_scores.iteritems():
-        #         total_scores[(ni,nj)] = score
-        # total_scores = dict(sorted(total_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:10000])
-        # for link, score in total_scores.iteritems():
-        #     fp.write('%d\t%d\n' % (link[0], link[1]))
-        #     fp.write('%d\t%d\n' % (link[1], link[0]))
-        # fp.close()
+                result_set.add((ni,nj))
+                result_set.add((nj,ni))
 
 if __name__ == '__main__':
-    # test_precs()
-    # test_cmn_friends()
-    # test_jaccard()
-    # test_adamic()
-    # test_pren_attachment()
+    test_precs()
+    test_cmn_friends()
+    test_jaccard()
+    test_adamic()
+    test_pren_attachment()
     ensemble()
     result = load_data_set('../data/ensemble_result.txt')
     test = load_data_set('../data/test.txt')
