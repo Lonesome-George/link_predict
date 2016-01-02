@@ -115,24 +115,20 @@ def ensemble():
                 temp_scores = {}
                 temp_scores[(ni, nj)] = score
     with open('../data/ensemble_result.txt', 'w') as fp:
-        # link_scores = dict(sorted(link_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:30000])
-        # node = 0
-        # temp_scores = {}
-        # for link, score in link_scores.iteritems():
-        #     if link[0] == node:
-        #         temp_scores[link] = score
-        #     else:
-        #         temp_scores = dict(sorted(temp_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:10])
-        #         for link, score in temp_scores.iteritems():
-        #             fp.write('%d\t%d\t%f\n' % (link[0], link[1], score))
-        #         node = link[0]
-        #         temp_scores = {}
-        #         temp_scores[link] = score
         for ni, temp_scores in link_scores.iteritems():
-            temp_scores = dict(sorted(temp_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:4])
+            temp_scores = dict(sorted(temp_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:3])
             for nj, score in temp_scores.iteritems():
-                fp.write('%d\t%d\t%f\n' % (ni, nj, score))
-        fp.close()
+                fp.write('%d\t%d\n' % (ni, nj))
+                fp.write('%d\t%d\n' % (nj, ni))
+        # total_scores = {}
+        # for ni, temp_scores in link_scores.iteritems():
+        #     for nj, score in temp_scores.iteritems():
+        #         total_scores[(ni,nj)] = score
+        # total_scores = dict(sorted(total_scores.iteritems(), key=lambda x:x[1], reverse=True)[0:10000])
+        # for link, score in total_scores.iteritems():
+        #     fp.write('%d\t%d\n' % (link[0], link[1]))
+        #     fp.write('%d\t%d\n' % (link[1], link[0]))
+        # fp.close()
 
 if __name__ == '__main__':
     # test_precs()
