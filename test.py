@@ -96,10 +96,7 @@ def normalize(link_scores):
 def ensemble():
     link_scores = {}
     filenames = ('../data/test_result.txt', '../data/test_result2.txt', '../data/test_result3.txt', '../data/test_result4.txt')
-    # total_score = 0
-    iter = 0
     for filename in filenames:
-        iter += 1
         result = load_data_list(filename)
         temp_scores = {}
         node = 0
@@ -110,7 +107,7 @@ def ensemble():
                 for link, score in normalize(temp_scores).iteritems():
                     if not link_scores.has_key(link[0]): link_scores[link[0]] = {}
                     if not link_scores[link[0]].has_key(link[1]): link_scores[link[0]][link[1]] = 0
-                    link_scores[link[0]][link[1]] +=  score
+                    link_scores[link[0]][link[1]] += score
                 node = ni
                 temp_scores = {}
                 temp_scores[(ni, nj)] = score
