@@ -73,15 +73,39 @@ def load_data_list(filename):
             if len(s) == 0: continue
             s = s.replace(" ", "\t")
             tup = tuple(s.split("\t"))
-            inttup = []
+            temp_tup = []
             for t in tup:
-                if t.find('.') == -1: inttup.append(int(t))
-                else: inttup.append(float(t))
-            dataset.append(tuple(inttup))
+                if t.find('.') != -1: temp_tup.append(float(t))
+                else: temp_tup.append(int(t))
+            dataset.append(tuple(temp_tup))
     return dataset
 
 def load_data_set(filename):
     return set(load_data_list(filename))
+
+def load_data_dict(filename):
+    dataset = {}
+    with open(filename, "r") as fp:
+        data = fp.read()
+        if "\r\n" in data:
+            data_list = data.split("\r\n")
+        else:
+            data_list = data.split("\n")
+        for s in data_list:
+            comment_index = s.find("#")
+            if comment_index != -1:
+                s = s[: comment_index]
+            if len(s) == 0: continue
+            s = s.replace(" ", "\t")
+            tup = tuple(s.split("\t"))
+            if (len(tup) != 2): return {}
+            temp_tup = []
+            for t in tup:
+                if t.find('.') == -1: temp_tup.append(int(t))
+                else: temp_tup.append(float(t))
+            if not dataset.has_key(temp_tup[0]): dataset[temp_tup[0]] = []
+            dataset[temp_tup[0]].append(temp_tup[1])
+    return dataset
 
 # 搜索二度和三度人脉
 def latent_friends(node, graph):
